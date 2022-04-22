@@ -1,5 +1,5 @@
 <template>
-  <Header title="title" />
+  <Header title="Remember Me" />
   <StoredResources :resources="storedResources" />
 </template>
 
