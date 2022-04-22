@@ -1,28 +1,81 @@
 <template>
+  <base-dialog
+    v-if="inputIsInvalid"
+    title="Invalid Input"
+    @close="confirmError"
+  >
+    <template #default>
+      <p>Unfortunately at least one input value is invalid</p>
+      <p>Please check all inputs</p>
+    </template>
+    <template #actions>
+      <BaseButton @click="confirmError">Ok</BaseButton>
+    </template>
+  </base-dialog>
   <base-card>
-    <form>
+    <form @submit.prevent="submitData">
       <div class="form-control">
         <label for="title">Title</label>
-        <input type="text" name="title" id="title" />
+        <input type="text" name="title" id="title" ref="titleInput" />
       </div>
 
       <div class="form-control">
         <label for="description">Description</label>
-        <textarea type="text" name="description" id="description" rows="3">
+        <textarea
+          type="text"
+          name="description"
+          id="description"
+          rows="3"
+          ref="descInput"
+        >
         </textarea>
       </div>
 
       <div class="form-control">
         <label for="link">link</label>
-        <input type="url" name="link" id="link" />
+        <input type="url" name="link" id="link" ref="linkInput" />
       </div>
 
       <div>
-        <BaseButton :type="submit">Add Resource</BaseButton>
+        <BaseButton type="submit">Add Resource</BaseButton>
       </div>
     </form>
   </base-card>
 </template>
+
+<script>
+import BaseDialog from '../UI/BaseDialog.vue';
+export default {
+  components: { BaseDialog },
+  inject: ['addResource'],
+  data() {
+    return {
+      inputIsInvalid: false,
+    };
+  },
+  methods: {
+    submitData() {
+      const enteredTitle = this.$refs.titleInput.value;
+      const enteredDesc = this.$refs.descInput.value;
+      const enteredUrl = this.$refs.linkInput.value;
+
+      if (
+        enteredTitle.trim() === '' ||
+        enteredDesc.trim() === '' ||
+        enteredUrl.trim() === ''
+      ) {
+        this.inputIsInvalid = true;
+        return;
+      }
+
+      this.addResource(enteredTitle, enteredDesc, enteredUrl);
+    },
+    confirmError() {
+      this.inputIsInvalid = false;
+    },
+  },
+};
+</script>
 
 <style scoped>
 label {
